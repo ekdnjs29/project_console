@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Layout Page</title>
+    <link rel="stylesheet" th:href="@{/css/header/header.css}">
+    <link rel="stylesheet" th:href="@{/css/header/writeHeader.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+</head>
+<body>
+
+    <!-- 헤더 포함 -->
+    <!-- isWritingForm 값에 따라 헤더 결정 -->
+  	<span th:if="${isWritingForm != null}">
+  		<div th:replace="~{header/writeHeader :: writeHeader}"></div>
+  	</span>
+  	 <span th:if="${isWritingForm == null}">
+  	  		<div th:replace="~{header/header :: header}"></div>
+  	</span>
+  	
+  	<!-- 각 페이지의 콘텐츠가 들어갈 위치 -->
+    <div layout:fragment="content" class="content"></div>
+	
+	<script src="/js/like.js"></script>
+    <script src="/js/comment.js"></script>
+    <script src="/js/imageUpload.js"></script>
+    <script src="/js/dropdown.js"></script>
+    <script src="/js/write.js"></script>
+	
+</body>
+</html>

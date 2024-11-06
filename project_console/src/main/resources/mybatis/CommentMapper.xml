@@ -1,0 +1,34 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.console.board.mapper.CommentMapper">
+    <!-- 댓글 추가 -->
+   <insert id="insertComment" parameterType="com.console.board.dtos.CommentDto" useGeneratedKeys="true" keyProperty="commentId">
+    INSERT INTO Comment (post_id, user_id, content, parent_comment_id, created_at)
+    VALUES (#{postId}, #{userId}, #{content}, 
+            <choose>
+                <when test="parentCommentId != null">#{parentCommentId}</when>
+                <otherwise>NULL</otherwise>
+            </choose>, 
+            NOW())
+	</insert>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment">
+        DELETE FROM Comment WHERE comment_id = #{commentId}
+    </delete>
+
+    <!-- 특정 게시글의 댓글 조회 -->
+    <select id="getCommentsByPostId" resultType="com.console.board.dtos.CommentDto">
+	    SELECT c.comment_id AS commentId, c.post_id AS postId, c.user_id AS userId, c.content, 
+	           c.parent_comment_id AS parentCommentId, c.created_at AS createdAt, 
+	           u.nickname AS userNickname
+	      FROM Comment c
+	      JOIN User u ON c.user_id = u.user_id
+	     WHERE c.post_id = #{postId}
+	     ORDER BY c.created_at ASC
+	</select>
+
+</mapper>
+

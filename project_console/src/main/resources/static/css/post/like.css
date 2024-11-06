@@ -1,0 +1,16 @@
+.like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.like-icon {
+    width: 24px;  /* 아이콘 크기를 설정 */
+    height: 24px;
+    vertical-align: middle;
+    transition: transform 0.2s ease; /* 애니메이션 효과 */
+}
+
+.like-button.liked .like-icon {
+    transform: scale(1.2); /* 크기를 살짝 키워주는 애니메이션 */
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판</title>
+</head>
+<body>
+
+    <!-- Home 페이지 콘텐츠 -->
+    <div layout:fragment="content" class="post-list-container">
+        
+        <!-- 게시글 목록 -->
+        <div class="post-list">
+            <div th:if="${postList != null and !postList.isEmpty()}" th:each="post : ${postList}" class="post-item">
+                
+                <!-- 클릭하면 상세 조회 페이지로 이동하는 링크 설정 -->
+				<a th:href="@{/posts/{postId}(postId=${post.postId})}" class="post-link" style="display: block; text-decoration: none; color: inherit;">
+                    <div class="post-image">
+                        <img src="/images/sample-image.jpg" alt="Post Image">
+                    </div>
+                    <div class="post-content">
+                        <p class="post-meta">
+							<span th:text="${post.userNickname}">작성자</span>
+							<span> &nbsp; </span> <!-- 공백 추가 -->
+							<span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+						</p>
+                        <h2 class="post-title" th:text="${post.title}">글 제목</h2>
+                        <p class="post-excerpt" th:text="${post.content}">내용 내용 내용</p>
+                        <p class="post-actions">하트 <span th:text="${post.likeCount}">0</span> 댓글 <span th:text="${post.commentCount}">0</span></p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- 게시글이 없을 때 표시 -->
+            <div th:if="${postList == null or postList.isEmpty()}">
+                <p>게시글이 없습니다.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

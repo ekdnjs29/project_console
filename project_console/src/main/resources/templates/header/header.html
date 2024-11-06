@@ -1,0 +1,37 @@
+<!-- header.html -->
+<header class="header" th:fragment="header">
+    <div class="logo">
+    	<a th:href="@{/}">
+        	<img src="/images/logo.png" alt="logo" class="logo-image">
+        </a>
+    </div>
+    
+    <nav class="nav">
+        <!-- 로그인 여부에 따라 다른 내용 표시 -->
+        <span th:if="${session.userDto != null}">
+            <!-- 글쓰기 버튼과 닉네임 표시 -->
+            <a href="/posts/write">글쓰기</a>
+            
+            <!-- 회원 등급이 admin일 경우 추가 메뉴 표시 -->
+            <span th:if="${session.userDto.role == 'ADMIN'}">
+                <a href="/user/list">회원 목록</a>
+                <a href="/reports/list">신고 목록</a>
+            </span>
+            
+			<!-- 닉네임과 드롭다운 메뉴 -->            
+<div class="dropdown">
+    <a class="dropdown-button" href="javascript:void(0);" onclick="toggleDropdown('header-dropdown-menu')" 
+       th:text="${session.userDto.nickname}">닉네임</a>
+    <div id="header-dropdown-menu" class="dropdown-menu">
+        <a href="/user/profile">프로필 수정</a>
+        <a href="/user/logout">로그아웃</a>
+    </div>
+</div>
+
+        </span>
+        <span th:if="${session.userDto == null}">
+            <a href="/user/login">로그인</a>
+        </span>
+    </nav>
+    
+</header>

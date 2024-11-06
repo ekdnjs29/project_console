@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>글 작성</title>
+    <link rel="stylesheet" th:href="@{/css/post/write.css}">
+
+</head>
+<body>
+    <div layout:fragment="content" class="write-form-container">
+       <form id="postForm" action="/posts/write" method="post" class="write-form-container">
+	        <!-- 제목 입력 -->
+	        <div class="title-container">
+	            <input type="text" class="title-input" name="title" placeholder="제목을 입력하세요" required>
+	        </div>
+	
+	       <!-- 내용 입력 (contenteditable div) -->
+	        <div class="content-container" id="contentContainer">    
+	            <div class="content-input" id="contentInput" contenteditable="true" autofocus></div>
+	            <input type="hidden" name="content" id="contentHiddenInput">
+	        </div>
+	        
+	        <!-- 이미지 URL을 저장할 hidden 필드 -->
+	        <input type="hidden" name="imageUrls" id="imageUrlsInput">
+    	</form>
+    </div>
+</body>
+</html>

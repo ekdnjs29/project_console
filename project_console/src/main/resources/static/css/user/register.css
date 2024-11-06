@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'NanumGothic';
+    src: url('/fonts/NanumGothic.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'NanumGothic';
+    src: url('/fonts/NanumGothicBold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+body {
+    font-family: 'NanumGothic', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+    margin: 0;
+    position: relative;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    left: 25px;
+}
+
+.logo-image {
+    width: 160px;
+    margin-right: 8px;
+}
+
+.register-container {
+    width: 340px;
+    padding: 40px 20px;
+    background-color: white;
+    border-radius: 20px;
+    text-align: center;
+    margin-top: 130px; /* 로고와의 간격 */
+}
+
+h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+.register-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    margin: 8px 0;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    border: 1px solid #ddd;
+    color: #666;
+    text-align: left;
+}
+
+/* 회원가입 버튼 스타일 */
+.register-button {
+    border: none;
+    background-color: #29A199;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}

@@ -1,0 +1,64 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'NanumGothic';
+    src: url('/fonts/NanumGothic.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'NanumGothic';
+    src: url('/fonts/NanumGothicBold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+body {
+    font-family: 'NanumGothic', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+    
+}
+
+.write-form-container {
+    width: 85%;
+    max-width: 750px;
+   	min-width: 420px;
+    margin: 0 auto;
+    padding-top: 100px;
+}
+
+.title-container {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.title-input {
+    font-family: 'NanumGothic', sans-serif;
+    width: 100%;
+    font-size: 25px;
+    border: none;
+    outline: none;
+    padding: 10px 0;
+}
+
+.content-container {
+    margin-top: 20px;
+}
+
+.content-input {
+    font-family: 'NanumGothic', sans-serif;
+    width: 100%;
+    min-height: 500px; /* 최소 높이 설정 */
+    font-size: 13px;
+    border: none;
+    outline: none;
+    resize: none; /* 사용자가 크기 조정 못하도록 설정 */
+/*     overflow-y: hidden; 내부 스크롤 숨기기 */
+    color: #555;
+    box-sizing: border-box;
+}

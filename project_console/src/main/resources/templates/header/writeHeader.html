@@ -1,0 +1,12 @@
+<!-- writeHeader.html -->
+<header class="header" th:fragment="writeHeader">
+    <div class="logo">
+        <a th:href="@{/}">
+            <img src="/images/logo.png" alt="logo" class="logo-image">
+        </a>
+    </div>
+    <div class="write-nav">
+        <span class="header-title">글 작성 중</span>
+        <button type="button" class="complete-button" onclick="submitPostForm()">완료</button>
+    </div>
+</header>

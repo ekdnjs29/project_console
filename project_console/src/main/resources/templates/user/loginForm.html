@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet" th:href="@{/css/user/login.css}">
+    
+</head>
+<body>
+	<div class="logo-container">
+		<a th:href="@{/}">
+        	<img src="/images/logo.png" alt="logo" class="logo-image">
+        </a>
+    </div>
+    
+    <div class="login-container">
+    
+        <h1>로그인</h1>
+        
+        <form th:action="@{/user/login}" th:object="${loginCommand}" method="post">
+            <!-- ID 입력 -->
+            <input type="text" th:field="*{id}" placeholder="ID" required>
+            
+            <!-- 비밀번호 입력 -->
+            <input type="password" th:field="*{password}" placeholder="password" required>
+
+            <!-- 아이디 저장 체크박스 -->
+            <div class="checkbox-container">
+                <input type="checkbox" id="remember-id">
+                <label for="remember-id">아이디 저장</label>
+            </div>
+
+            <!-- 로그인 버튼 -->
+            <button type="submit" class="login-button">로그인</button>
+
+            <!-- 회원가입 링크 버튼 -->
+            <button type="button" class="signup-button" onclick="location.href='/user/register'">회원가입</button>
+        </form>
+    </div>
+</body>
+</html>

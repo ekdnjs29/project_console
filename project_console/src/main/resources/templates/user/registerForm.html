@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/user/register.css}">
+</head>
+<body>
+    <div class="logo-container">
+    	<a th:href="@{/}">
+       		<img src="/images/logo.png" alt="logo" class="logo-image"> <!-- 로고 이미지 -->
+        </a>
+    </div>
+
+    <div class="register-container">
+        <h1>회원가입</h1>
+        
+        <form th:action="@{/user/register}" th:object="${registerUserCommand}" method="post">
+            <!-- 아이디 입력 -->
+            <input type="text" th:field="*{id}" placeholder="ID" required>
+
+            <!-- 닉네임 입력 -->
+            <input type="text" th:field="*{nickname}" placeholder="Name" required>
+
+            <!-- 이메일 입력 -->
+            <input type="email" th:field="*{email}" placeholder="Email" required>
+
+            <!-- 비밀번호 입력 -->
+            <input type="password" th:field="*{password}" placeholder="password" required>
+
+            <!-- 회원가입 버튼 -->
+            <button type="submit" class="register-button">회원가입</button>
+        </form>
+    </div>
+</body>
+</html>

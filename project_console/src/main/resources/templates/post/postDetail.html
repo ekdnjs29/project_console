@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 상세</title>
+    <link rel="stylesheet" th:href="@{/css/post/detail.css}">
+    <link rel="stylesheet" th:href="@{/css/post/like.css}">
+    
+</head>
+<body>
+    <div layout:fragment="content" class="detail-container">
+        <div class="header-section">
+            <h1 class="post-title" th:text="${post.title}">제목</h1>
+            <div class="author-info">
+                <span th:text="${post.userNickname}">작성자 닉네임</span> · 
+                <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+            </div>
+
+            <span th:if="${session.userDto != null}">
+                <div class="post-dropdown">
+                    <a class="dropdown-button" href="javascript:void(0);" onclick="toggleDropdown('post-option-menu')">︙</a>
+                    <div id="post-option-menu" class="dropdown-menu">
+                        <div th:if="${session.userDto.nickname == post.userNickname}" class='aa'>
+                            <a th:href="@{/posts/edit/{postId}(postId=${post.postId})}">수정하기</a>
+                            <form th:action="@{/posts/delete/{postId}(postId=${post.postId})}" method="post" style="display:inline;">
+                                <button type="submit">삭제하기</button>
+                            </form>
+                        </div>
+                        <div th:if="${session.userDto.nickname != post.userNickname}" class='aa'>
+                            <a th:href="@{/posts/report/{postId}(postId=${post.postId})}">신고하기</a>
+                        </div>
+                    </div>
+                </div>
+            </span>
+        </div>
+
+        <div class="content-section">
+            <p class="post-content" th:text="${post.content}">내용</p>
+        </div>
+        
+        <!-- 좋아요 및 댓글 영역 -->
+		<div class="interaction-section">
+			<!-- 좋아요 버튼 -->
+            <button type="button" class="like-button" th:onclick="|toggleLike(${post.postId})|">
+                <img th:src="${post.isLiked ? '/images/like2.png' : '/images/like1.png'}" alt="좋아요 버튼" id="like-icon" class="like-icon">
+            </button>
+            <span id="like-count" th:text="${post.likeCount}">0</span>		    	
+		    <span class="comment-count">댓글 <span th:text="${post.commentCount}">0</span></span>
+		</div>
+
+    	 <!-- 댓글 목록 -->
+        <div class="comments-section">
+            <h3>댓글</h3>
+            <div id="comment-list">
+                <div th:each="comment : ${comments}">
+                    <div class="comment-item">
+                        <span class="comment-author" th:text="${comment.userNickname}">작성자</span> ·
+                        <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                        <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 댓글 입력 -->
+		<div class="comment-form-section">
+			<form id="comment-form" th:data-post-id="${post.postId}">
+		        <textarea id="comment-content" name="content" placeholder="댓글을 입력하세요" required></textarea>
+		        <button type="button" id="submit-comment">댓글 작성</button>
+		    </form>
+		</div>
+
+
+    </div>
+</body>
+
+</html>
