@@ -17,4 +17,6 @@ public class SuspendedUserDto {
     private String reason;
     private Timestamp startDate;
     private Timestamp endDate;
+
 }
+

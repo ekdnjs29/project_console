@@ -5,7 +5,9 @@ import com.console.board.command.UpdatePostCommand;
 import com.console.board.dtos.PostDto;
 import com.console.board.dtos.UserDto;
 import com.console.board.service.PostService;
-import com.console.board.service.ImageService; 
+import com.console.board.service.ImageService;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
@@ -27,21 +30,21 @@ public class PostController {
     @Autowired
     public PostController(PostService postService, ImageService imageService) {
         this.postService = postService;
-        this.imageService = imageService; 
+        this.imageService = imageService;
     }
     
- // 게시글 작성 폼 페이지로 이동
+    // 게시글 작성 폼 페이지로 이동
     @GetMapping("/write")
     public String showWriteForm(Model model) {
         model.addAttribute("insertPostCommand", new InsertPostCommand());
         model.addAttribute("isWritingForm", true); // 글 작성 폼 여부 설정
-
         return "post/writeForm"; // 게시글 작성 폼 뷰 페이지
     }
 
- // 게시글 작성 처리
+    // 게시글 작성 처리
     @PostMapping("/write")
-    public String createPost(@Valid InsertPostCommand insertPostCommand, BindingResult result, HttpSession session) {
+    public String createPost(@Valid PostDto postDto, InsertPostCommand insertPostCommand, 
+    		BindingResult result, HttpSession session, HttpServletRequest request) {
         if (result.hasErrors()) {
             return "post/writeForm";
         }
@@ -53,35 +56,31 @@ public class PostController {
 
         insertPostCommand.setUserId(loggedInUser.getUserId());
 
+        // 이미지 이동 및 최종 URL 생성
+        List<String> finalImageUrls = imageService.moveImagesToUpload(insertPostCommand.getImageUrls(), request);
+        String updatedContent = postDto.getContent().replace("/temp/", "/upload/");
+        postDto.setContent(updatedContent);
+        insertPostCommand.setContent(updatedContent);
+
+        // 게시글 저장
         int postId = postService.insertPost(insertPostCommand);
         if (postId <= 0) {
             return "post/writeForm";
         }
 
-        // /temp/ URL을 /upload/로 변환하고 중복 제거하여 최종 URL만 저장
-        List<String> finalImageUrls = insertPostCommand.getImageUrls().stream()
-                .filter(url -> url != null && !url.isEmpty() && url.startsWith("/temp/"))
-                .map(url -> url.replace("/temp/", "/upload/"))
-                .distinct()
-                .toList();
+        // 이미지와 게시글 ID 연결
+        imageService.linkImagesToPost(finalImageUrls, new ArrayList<>(), postId, request);
 
-        if (!finalImageUrls.isEmpty()) {
-            imageService.linkImagesToPost(finalImageUrls, postId);
-        }
-
-        System.out.println("게시글 저장 성공, 홈으로 리다이렉트");
         return "redirect:/";
     }
-
 
     // 게시글 상세 조회
     @GetMapping("/{postId}")
     public String getPost(@PathVariable int postId, Model model, HttpSession session) {
         UserDto loggedInUser = (UserDto) session.getAttribute("userDto");
-        int userId = loggedInUser != null ? loggedInUser.getUserId() : -1; // 로그인한 사용자 ID (없으면 -1)
+        int userId = loggedInUser != null ? loggedInUser.getUserId() : -1;
 
         PostDto post = postService.getPostWithLikeStatus(postId, userId);
-
         if (post == null) {
             return "redirect:/"; // 게시글이 없으면 목록으로 리다이렉트
         }
@@ -89,36 +88,75 @@ public class PostController {
         boolean isAuthor = loggedInUser != null && loggedInUser.getUserId() == post.getUserId();
         model.addAttribute("post", post);
         model.addAttribute("isAuthor", isAuthor);
+        model.addAttribute("isDetailForm", true); 
 
         return "post/postDetail";
     }
 
-    // 게시글 수정 폼 페이지로 이동
+ // 게시글 수정 폼 페이지로 이동
     @GetMapping("/edit/{postId}")
-    public String showEditForm(@PathVariable int postId, Model model) {
+    public String showEditForm(@PathVariable int postId, Model model, HttpServletRequest request) {
         PostDto post = postService.getPost(postId);
-        model.addAttribute("updatePostCommand", new UpdatePostCommand(post.getPostId(), post.getTitle(), post.getContent()));
-        model.addAttribute("isWritingForm", true); // 글 작성 폼 여부 설정
-
-        return "post/editForm"; // 게시글 수정 폼 뷰 페이지
-    }
-
- // 게시글 수정 처리
-    @PostMapping("/edit") // URL 경로에서 postId를 받음
-    public String updatePost(@PathVariable int postId, @Valid UpdatePostCommand updatePostCommand, BindingResult result) {
-        if (result.hasErrors()) {
-            return "post/editForm"; // 유효성 검사 실패 시 다시 수정 폼으로 이동
+        if (post == null) {
+            throw new IllegalStateException("해당 게시글이 존재하지 않습니다: " + postId);
         }
-        updatePostCommand.setPostId(postId); // postId를 UpdatePostCommand에 설정
-        postService.updatePost(updatePostCommand);
-        return "redirect:/posts/" + postId; // 수정 완료 후 게시글 상세 페이지로 리다이렉트
+
+        // 기존 이미지 리스트를 세션에 저장
+        List<String> existingImageUrls = imageService.getImageUrlsByPostId(postId);
+        request.getSession().setAttribute("existingImageUrls", existingImageUrls);
+
+        model.addAttribute("updatePostCommand", new UpdatePostCommand(post.getPostId(), post.getTitle(), 
+        		post.getContent(), existingImageUrls));
+        model.addAttribute("isWritingForm", true);
+
+        return "post/editForm";
     }
+
+    // 게시글 수정 처리
+    @PostMapping("/edit/{postId}")
+    public String updatePost(
+            @PathVariable int postId, 
+            @Valid UpdatePostCommand updatePostCommand, 
+            BindingResult result, 
+            HttpServletRequest request) {
+
+        if (result.hasErrors()) {
+            return "post/editForm";
+        }
+
+        // 세션에서 기존 이미지 목록을 가져와 삭제할 이미지와 새로 추가된 이미지 구분
+        @SuppressWarnings("unchecked")
+        List<String> existingImageUrls = (List<String>) request.getSession().getAttribute("existingImageUrls");
+        if (existingImageUrls == null) {
+            throw new IllegalStateException("기존 이미지 정보가 없습니다.");
+        }
+
+        // 최종 이미지 목록을 준비하고 삭제할 이미지 식별
+        List<String> finalImageUrls = imageService.prepareImagesForUpdate(updatePostCommand.getImageUrls(), existingImageUrls, request);
+
+        // 본문 내용의 이미지 경로를 temp -> upload로 변환
+        String updatedContent = updatePostCommand.getContent().replace("/temp/", "/upload/");
+        updatePostCommand.setContent(updatedContent);
+
+        // 게시글 수정
+        postService.updatePost(updatePostCommand);
+
+        // 최종 이미지와 게시글 ID 연결
+        imageService.linkImagesToPost(finalImageUrls, new ArrayList<>(), postId, request);
+
+        // 세션에서 기존 이미지 리스트 제거
+        request.getSession().removeAttribute("existingImageUrls");
+
+        return "redirect:/posts/" + postId;
+    }
+
 
 
     // 게시글 삭제
     @PostMapping("/delete/{postId}")
-    public String deletePost(@PathVariable int postId) {
+    public String deletePost(@PathVariable int postId, HttpServletRequest request) {
+        imageService.deletePhysicalImagesByPostId(postId, request);
         postService.deletePost(postId);
-        return "redirect:/"; // 삭제 완료 후 게시글 목록으로 리다이렉트
+        return "redirect:/";
     }
 }

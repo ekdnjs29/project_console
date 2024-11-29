@@ -12,10 +12,11 @@
             <!-- 글쓰기 버튼과 닉네임 표시 -->
             <a href="/posts/write">글쓰기</a>
             
+            
             <!-- 회원 등급이 admin일 경우 추가 메뉴 표시 -->
-            <span th:if="${session.userDto.role == 'ADMIN'}">
-                <a href="/user/list">회원 목록</a>
-                <a href="/reports/list">신고 목록</a>
+            <span th:if="${session.userDto.role.toString() == 'ADMIN'}">
+                <a href="/members/list">회원 목록</a>
+                <a href="/report/list">신고 목록</a>
             </span>
             
 			<!-- 닉네임과 드롭다운 메뉴 -->            

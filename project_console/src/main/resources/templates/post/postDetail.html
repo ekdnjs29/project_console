@@ -7,6 +7,7 @@
     <title>게시글 상세</title>
     <link rel="stylesheet" th:href="@{/css/post/detail.css}">
     <link rel="stylesheet" th:href="@{/css/post/like.css}">
+    <link rel="stylesheet" th:href="@{/css/imageDitail.css}">
     
 </head>
 <body>
@@ -14,22 +15,23 @@
         <div class="header-section">
             <h1 class="post-title" th:text="${post.title}">제목</h1>
             <div class="author-info">
-                <span th:text="${post.userNickname}">작성자 닉네임</span> · 
+                <span th:text="${post.userNickname}">작성자 닉네임</span> 
                 <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
             </div>
-
+            
+            <!-- Drop-down for post options (e.g., edit, delete) -->
             <span th:if="${session.userDto != null}">
                 <div class="post-dropdown">
-                    <a class="dropdown-button" href="javascript:void(0);" onclick="toggleDropdown('post-option-menu')">︙</a>
+                    <a class="dropdown-button" href="javascript:void(0);" th:onclick="|toggleDropdown('post-option-menu')|">︙</a>
                     <div id="post-option-menu" class="dropdown-menu">
-                        <div th:if="${session.userDto.nickname == post.userNickname}" class='aa'>
-                            <a th:href="@{/posts/edit/{postId}(postId=${post.postId})}">수정하기</a>
+                        <div th:if="${session.userDto.nickname == post.userNickname}">
+                            <a class="aa" th:href="@{/posts/edit/{postId}(postId=${post.postId})}">수정하기</a>
                             <form th:action="@{/posts/delete/{postId}(postId=${post.postId})}" method="post" style="display:inline;">
-                                <button type="submit">삭제하기</button>
+                                <button class="aa" type="submit">삭제하기</button>
                             </form>
                         </div>
-                        <div th:if="${session.userDto.nickname != post.userNickname}" class='aa'>
-                            <a th:href="@{/posts/report/{postId}(postId=${post.postId})}">신고하기</a>
+                        <div th:if="${session.userDto.nickname != post.userNickname}">
+  							  <a class="aa" href="javascript:void(0);" th:onclick="|reportItem('POST', ${post.postId})|">신고하기</a>
                         </div>
                     </div>
                 </div>
@@ -37,42 +39,62 @@
         </div>
 
         <div class="content-section">
-            <p class="post-content" th:text="${post.content}">내용</p>
+            <p class="post-content" th:utext="${post.content}">내용</p>
         </div>
-        
+
         <!-- 좋아요 및 댓글 영역 -->
-		<div class="interaction-section">
-			<!-- 좋아요 버튼 -->
+        <div class="interaction-section">
             <button type="button" class="like-button" th:onclick="|toggleLike(${post.postId})|">
                 <img th:src="${post.isLiked ? '/images/like2.png' : '/images/like1.png'}" alt="좋아요 버튼" id="like-icon" class="like-icon">
             </button>
-            <span id="like-count" th:text="${post.likeCount}">0</span>		    	
-		    <span class="comment-count">댓글 <span th:text="${post.commentCount}">0</span></span>
-		</div>
+            <span id="like-count" th:text="${post.likeCount}">0</span>
+    		<span class="comment-count">댓글 <span>0</span></span> <!-- 댓글 수 업데이트될 위치 -->
+        </div>
 
-    	 <!-- 댓글 목록 -->
-        <div class="comments-section">
-            <h3>댓글</h3>
-            <div id="comment-list">
-                <div th:each="comment : ${comments}">
-                    <div class="comment-item">
-                        <span class="comment-author" th:text="${comment.userNickname}">작성자</span> ·
-                        <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
-                        <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
-                    </div>
+        <!-- 댓글 목록 -->
+        <div class="comments-section" id="comment-list">
+            <div th:each="comment : ${comments}" th:id="'comment-' + ${comment.commentId}">
+        
+                <div class="comment-item" data-comment-id="${comment.commentId}" th:data-parent-id="${comment.parentCommentId}">
+                    <span class="comment-author" th:text="${comment.userNickname}">작성자</span>
+                    <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+
+                    <span th:if="${session.userDto.userId != comment.userId}">
+                        <a href="javascript:void(0);" th:onclick="|reportItem('COMMENT', ${comment.commentId})|">신고</a>
+                    </span>
+
+                    <span th:if="${session.userDto.userId == comment.userId}">
+                        <div class="comment-dropdown">
+                            <a class="dropdown-button" href="javascript:void(0);" th:onclick="|toggleDropdown('comment-option-menu-${comment.commentId}')|">︙</a>
+                            <div id="comment-option-menu-${comment.commentId}" class="dropdown-menu">
+                                <button type="button" th:onclick="|editComment(${comment.commentId})|">수정하기</button>
+                                <button type="button" th:onclick="|deleteComment(${comment.commentId})|">삭제하기</button>
+                            </div>
+                        </div>
+                    </span>
+
+                    <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
+
+                    <textarea class="comment-edit-content" th:value="${comment.content}" style="display:none;"></textarea>
+
+                    <button type="button" class="comment-save-button" style="display:none;" th:onclick="|saveEdit(${comment.commentId})|">저장</button>
+                    <button type="button" class="comment-cancel-button" style="display:none;" th:onclick="|cancelEdit(${comment.commentId})|">취소</button>
+
+                    <button class="reply-button" type="button" th:onclick="|replyToComment(${comment.commentId}, '${comment.userNickname}')|">답글</button>
+
+                    <div class="reply-container" id="replies-${comment.commentId}"></div>
                 </div>
             </div>
         </div>
-        <!-- 댓글 입력 -->
-		<div class="comment-form-section">
-			<form id="comment-form" th:data-post-id="${post.postId}">
-		        <textarea id="comment-content" name="content" placeholder="댓글을 입력하세요" required></textarea>
-		        <button type="button" id="submit-comment">댓글 작성</button>
-		    </form>
-		</div>
 
-
+        <!-- 댓글 입력 폼 추가 -->
+        <div class="comment-form-section">
+            <form id="comment-form" th:data-post-id="${post.postId}">
+                <textarea id="comment-content" name="content" placeholder="댓글 입력"></textarea>
+                <input type="hidden" id="parent-comment-id" value="" /> <!-- 부모 댓글 ID -->
+                <button type="button" id="submit-comment">등록</button>
+            </form>
+        </div>
     </div>
 </body>
-
 </html>

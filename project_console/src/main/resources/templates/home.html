@@ -4,41 +4,88 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>게시판</title>
+    <title>게시판</title>    
+    <link rel="stylesheet" th:href="@{/css/home.css}">
 </head>
 <body>
 
     <!-- Home 페이지 콘텐츠 -->
     <div layout:fragment="content" class="post-list-container">
+        <!-- 게시글 필터 드롭다운 -->
+        <div class="filter-container">
+            <div class="filter-dropdown">
+                <select id="postFilter" onchange="filterPosts()">
+                    <option value="all">전체글</option>
+                    <option value="myPosts">내 글</option>
+                </select>
+            </div>
+
+            <!-- 버튼 그룹 컨테이너 -->
+            <div class="view-toggle-group">
+                <button class="view-toggle-button active" onclick="setListView()" id="listViewBtn">
+                    <img src="/images/list-view.png" alt="목록 보기">
+                </button>
+                <button class="view-toggle-button" onclick="setGridView()" id="gridViewBtn">
+                    <img src="/images/grid-view.png" alt="그리드 보기">
+                </button>
+            </div>
+        </div>
         
-        <!-- 게시글 목록 -->
-        <div class="post-list">
+        <!-- 목록형 게시글 목록 -->
+        <div class="post-list list-view" id="listViewContainer">
             <div th:if="${postList != null and !postList.isEmpty()}" th:each="post : ${postList}" class="post-item">
-                
-                <!-- 클릭하면 상세 조회 페이지로 이동하는 링크 설정 -->
-				<a th:href="@{/posts/{postId}(postId=${post.postId})}" class="post-link" style="display: block; text-decoration: none; color: inherit;">
-                    <div class="post-image">
-                        <img src="/images/sample-image.jpg" alt="Post Image">
-                    </div>
+                <a th:href="@{/posts/{postId}(postId=${post.postId})}" class="post-link" style="display: flex; align-items: center; text-decoration: none; color: inherit; justify-content: space-between;">
                     <div class="post-content">
                         <p class="post-meta">
-							<span th:text="${post.userNickname}">작성자</span>
-							<span> &nbsp; </span> <!-- 공백 추가 -->
-							<span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
-						</p>
+                            <span th:text="${post.userNickname}">작성자</span>
+                            <span> &nbsp; </span>
+                            <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                        </p>
                         <h2 class="post-title" th:text="${post.title}">글 제목</h2>
-                        <p class="post-excerpt" th:text="${post.content}">내용 내용 내용</p>
-                        <p class="post-actions">하트 <span th:text="${post.likeCount}">0</span> 댓글 <span th:text="${post.commentCount}">0</span></p>
+<p class="post-excerpt" 
+   th:text="${#strings.abbreviate(#strings.replace(post.cleanContent, '삭제', ''), 100)}">
+   내용 내용 내용
+</p>
+
+                        <div class="post-actions">
+                            <span>하트 <span th:text="${post.likeCount}">0</span></span>
+                            <span>댓글 <span th:text="${post.commentCount}">0</span></span>
+                        </div>
+                    </div>
+                    <div class="post-image" th:if="${post.firstImageUrl}">
+                        <img th:src="@{${post.firstImageUrl}}" alt=" ">
                     </div>
                 </a>
             </div>
+            <p th:if="${postList == null or postList.isEmpty()}" class="no-posts-message">게시글이 없습니다.</p>
+        </div>
 
-            <!-- 게시글이 없을 때 표시 -->
-            <div th:if="${postList == null or postList.isEmpty()}">
-                <p>게시글이 없습니다.</p>
+        <!-- 그리드형 게시글 목록 -->
+        <div class="post-list grid-view" id="gridViewContainer" style="display: none;">
+            <div th:if="${postList != null and !postList.isEmpty()}" th:each="post : ${postList}" class="post-item">
+                <a th:href="@{/posts/{postId}(postId=${post.postId})}" class="post-link">
+                    <div class="post-image" th:if="${post.firstImageUrl}">
+                        <img th:src="@{${post.firstImageUrl}}" alt=" ">
+                    </div>
+                    <div class="post-content">
+                        <p class="post-meta">
+                            <span th:text="${post.userNickname}">작성자</span>
+                            <span> &nbsp; </span>
+                            <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+                        </p>
+                        <h2 class="post-title" th:text="${post.title}">글 제목</h2>
+<p class="post-excerpt" 
+   th:text="${#strings.abbreviate(#strings.replace(post.cleanContent, '삭제', ''), 100)}">
+   내용 내용 내용
+</p>                        <div class="post-actions">
+                            <span>하트 <span th:text="${post.likeCount}">0</span></span>
+                            <span>댓글 <span th:text="${post.commentCount}">0</span></span>
+                        </div>
+                    </div>
+                </a>
             </div>
+            <p th:if="${postList == null or postList.isEmpty()}" class="no-posts-message">게시글이 없습니다.</p>
         </div>
     </div>
-
 </body>
 </html>

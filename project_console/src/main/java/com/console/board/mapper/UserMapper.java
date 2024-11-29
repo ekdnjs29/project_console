@@ -1,6 +1,11 @@
 package com.console.board.mapper;
 
 import com.console.board.dtos.UserDto;
+import org.apache.ibatis.annotations.Param;
+
+import java.awt.print.Pageable;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -20,4 +25,13 @@ public interface UserMapper {
     
     // id-> 닉네임
     UserDto getUserById(int userId);
+    
+ // UserMapper 인터페이스
+    int countUsers();
+
+    // 모든 사용자 조회
+    List<UserDto> findAll(@Param("limit") int limit, @Param("offset") int offset);
+
+ // Role 업데이트
+    int updateUserRole(UserDto userDto);
 }

@@ -21,6 +21,9 @@ public class PostDto {
     private int commentCount;
     private int likeCount;
     private Timestamp createdAt;
+    private String firstImageUrl; // 첫 번째 이미지 URL을 위한 필드 추가
+    private String cleanContent; // HTML 태그가 제거된 내용 필드 추가
+
     
  // 좋아요 여부를 나타내는 필드 추가
     private boolean isLiked;

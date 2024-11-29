@@ -1,12 +1,49 @@
 <!-- writeHeader.html -->
 <header class="header" th:fragment="writeHeader">
+    <!-- 로고 -->
     <div class="logo">
         <a th:href="@{/}">
             <img src="/images/logo.png" alt="logo" class="logo-image">
         </a>
     </div>
+    
+    <!-- 가운데 정렬할 버튼들을 묶는 컨테이너 -->
     <div class="write-nav">
-        <span class="header-title">글 작성 중</span>
-        <button type="button" class="complete-button" onclick="submitPostForm()">완료</button>
+        <!-- 글자 크기 드롭다운 -->
+        <select id="fontSizeSelector" onchange="changeFontSize(this.value)">
+            <option value="13">13</option>
+            <option value="15">15</option>
+            <option value="17">17</option>
+            <option value="19">19</option>
+        </select>
+        
+        <!-- 텍스트 서식 버튼들 -->
+        <button type="button" onclick="formatText('bold')" class="icon-button bold-btn"></button>
+        <button type="button" onclick="formatText('italic')" class="icon-button italic-btn"></button>
+        <button type="button" onclick="formatText('underline')" class="icon-button underline-btn"></button>
+        <button type="button" onclick="formatText('strikethrough')" class="icon-button strikethrough-btn"></button>
+        
+        <!-- 세로 구분선 -->
+        <span class="vertical-separator"></span>
+        
+        <!-- 정렬 버튼들 -->
+        <button type="button" onclick="formatText('justifyLeft')" class="icon-button left-btn"></button>
+        <button type="button" onclick="formatText('justifyCenter')" class="icon-button center-btn"></button>
+        <button type="button" onclick="formatText('justifyRight')" class="icon-button right-btn"></button>
+        <button type="button" onclick="formatText('justifyFull')" class="icon-button full-btn"></button>
+        
+        <!-- 세로 구분선 -->
+        <span class="vertical-separator"></span>
+        
+        <!-- 이미지 및 코드 블록 버튼들 -->
+        <button type="button" onclick="document.getElementById('imageUploadInput').click()" class="icon-button image-btn"></button>
+        <input type="file" id="imageUploadInput" style="display:none;" onchange="handleImageUpload(this)">
+        
+        <button type="button" onclick="insertCodeBlock()" class="icon-button code-btn"></button>
     </div>
+    
+    <!-- 완료 버튼 -->
+    <button type="button" class="complete-button" onclick="submitPostForm('postForm', 'contentInput', 'contentHiddenInput')">
+        완료
+    </button>
 </header>

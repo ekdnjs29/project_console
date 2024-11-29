@@ -1,14 +1,3 @@
-@font-face {
-    font-family: 'NanumGothic';
-    src: url('/fonts/NanumGothic.ttf') format('truetype');
-    font-weight: normal;
-}
-
-@font-face {
-    font-family: 'NanumGothic';
-    src: url('/fonts/NanumGothicBold.ttf') format('truetype');
-    font-weight: bold;
-}
 
 body {
     font-family: 'NanumGothic', sans-serif;
@@ -37,7 +26,7 @@ body {
 }
 
 .author-info {
-    font-size: 0.9rem;
+    font-size: 14px;
     color: #888;
 }
 
@@ -50,6 +39,7 @@ body {
 
 /* 드롭다운 버튼 스타일 */
 .dropdown-button {
+	margin-top: 20px;
     background: none;
     border: none;
     font-family:'NanumGothic';
@@ -112,3 +102,220 @@ body {
     display: block;
 }
 
+.interaction-section {
+	margin-top: 90px; 
+	margin-left: 10px;
+	padding-bottom: 15px; 
+		
+}
+/* 댓글 컨테이너 스타일 */
+.comments-section {
+    border-top: 1px solid #e0e0e0;
+}
+.comment-author {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.comment-date {
+	font-size: 13px;
+	color: #333;
+	margin-left: 10px;
+}
+
+/* 신고 버튼 */
+.comment-date + a {
+	color: #333;
+    font-size: 13px;
+   	margin-left: 10px;
+    
+    text-decoration: none;
+}
+
+.comment-date + a:hover {
+    text-decoration: underline;
+}
+.comment-content {
+	margin: 10px 0px;
+	font-size: 15px;
+	
+}
+
+
+
+.comment-dropdown {
+    position: absolute; /* 절대 위치로 설정 */
+    top: 0; /* 위쪽에 위치 */
+    right: 0; /* 오른쪽에 위치 */
+}
+
+.dropdown-button {
+    cursor: pointer; /* 포인터 스타일 */
+}
+
+.content-input {
+    overflow-y: hidden;
+}
+
+.comment-form-section {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 18px; /* 테두리 둥글기 */
+    padding: 5px 10px; /* 안쪽 여백 */
+    margin-top: 30px; /* 위쪽 여백 */
+    margin-bottom: 100px; /* 아래 여백 */
+    height: 45px; /* 전체 높이 지정 */
+   
+}
+
+#comment-form {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.comment-form-section textarea {
+    flex-grow: 1; /* 가능한 공간을 모두 차지 */
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 없음 */
+    outline: none; /* 포커스 아웃라인 없음 */
+    resize: none; /* 크기 조절 비활성화 */
+    padding: 10px; /* 안쪽 여백 */
+    font-size: 14px; /* 글자 크기 */
+    margin-top: 15px;
+    font-family: 'NanumGothic';
+}
+
+.comment-form-section button {
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 없음 */
+    color: red; /* 글자 색상 */
+    margin-right: 10px; /* 입력란과 버튼 사이 여백 */
+    cursor: pointer; /* 커서 모양 변경 */
+    font-size: 14px; /* 글자 크기 */
+    font-family: 'NanumGothic';
+
+}
+
+.comment-count {
+	margin-left: 10px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.comment-count span{
+	color: #29A199;
+}
+
+#like-count {
+	font-size: 14px;
+}
+
+.comment-dropdown button {
+	margin-left: 20px;
+}
+
+.comment-item {
+    position: relative; /* 상대 위치로 설정 */
+/*     border-top: 1px solid #e0e0e0;
+ */    font-size: 14px;
+    padding-top: 20px;
+    
+}
+
+/* 답글 스타일 (첫 번째 답글에만 들여쓰기) */
+.comment-item.reply {
+	
+    padding-left: 40px;
+    padding-top: 20px;
+}
+
+/* 두 번째 답글부터는 들여쓰기 없음 */
+.comment-item.reply .reply-container .comment-item {
+    padding-left: 0;
+    border-left: none;
+}
+/* 답글 작성자 스타일 */
+.reply .comment-author {
+    font-weight: bold;
+}
+
+/* 드롭다운 위치 수정 */
+.comment-dropdown {
+    top: 20px;
+    right: 0px;
+}
+
+/* 답글 버튼 */
+.reply-button {
+    font-size: 12px;
+    color: #333;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+   font-family: 'NanumGothic';
+    
+}
+
+.reply-button:hover {
+    text-decoration: underline;
+}
+
+/* 버튼들을 감싸는 컨테이너 */
+.comment-button-container {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    gap: 10px; /* 버튼 간격 조정 */
+    margin-bottom: 10px;
+}
+
+/* 수정 및 취소 버튼 */
+.comment-save-button,
+.comment-cancel-button {
+    font-size: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px; 
+    margin-bottom: 10px;
+    display: inline-block; /* 버튼들이 나란히 정렬되도록 설정 */
+    ont-family: 'NanumGothic';
+    
+}
+
+.comment-save-button {
+	    color: red; /* 글자 색상 */
+}
+
+.comment-cancel-button {
+		  color:#7F7F7F ; /* 글자 색상 */
+	
+}
+
+.comment-edit-content {
+    display: block;
+    width: 100%;
+    padding-top:10px;
+     border: none; /* 테두리 제거 */
+    outline: none; /* 포커스 시 나오는 외곽선 제거 */
+    resize: none; /* 크기 조절 비활성화 */
+    background-color: transparent; /* 배경 투명하게 설정 */
+    font-family: 'NanumGothic';
+    font-size: 15px; 
+    margin-bottom: 10px; /* 수정 입력 영역 아래에 여백 추가 */
+    
+}
+
+
+.comment-save-button:hover,
+.comment-cancel-button:hover {
+    text-decoration: underline;
+}
+
+/* 수정 모드에서는 드롭다운 및 답글 버튼 숨기기 */
+.comment-item.edit-mode .comment-dropdown,
+.comment-item.edit-mode .reply-button {
+    display: none;
+}

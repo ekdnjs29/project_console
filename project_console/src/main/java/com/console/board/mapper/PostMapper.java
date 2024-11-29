@@ -14,6 +14,9 @@ public interface PostMapper {
     // 특정 게시글 조회
     PostDto getPostById(@Param("postId") int postId);
 
+    // 특정 사용자의 게시글 목록 조회
+    List<PostDto> findPostsByUserId(@Param("userId") int userId);
+
     // 새로운 게시글 추가
     int insertPost(PostDto postDto);
 

@@ -3,32 +3,67 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.console.board.mapper.CommentMapper">
+    
     <!-- 댓글 추가 -->
-   <insert id="insertComment" parameterType="com.console.board.dtos.CommentDto" useGeneratedKeys="true" keyProperty="commentId">
-    INSERT INTO Comment (post_id, user_id, content, parent_comment_id, created_at)
-    VALUES (#{postId}, #{userId}, #{content}, 
+    <insert id="insertComment" parameterType="com.console.board.dtos.CommentDto" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO Comment (post_id, user_id, content, parent_comment_id, created_at)
+        VALUES (#{postId}, #{userId}, #{content}, 
             <choose>
                 <when test="parentCommentId != null">#{parentCommentId}</when>
                 <otherwise>NULL</otherwise>
             </choose>, 
             NOW())
-	</insert>
-
+    </insert>
+    
+    <!-- 특정 게시글의 댓글 조회 (기존 정렬) -->
+    <select id="getCommentsByPostId" resultType="com.console.board.dtos.CommentDto">
+        SELECT c.comment_id AS commentId, c.post_id AS postId, c.user_id AS userId, c.content, 
+               c.parent_comment_id AS parentCommentId, c.created_at AS createdAt, 
+               u.nickname AS userNickname
+          FROM Comment c
+          JOIN User u ON c.user_id = u.user_id
+         WHERE c.post_id = #{postId}
+         ORDER BY c.created_at ASC
+    </select>
+    
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="com.console.board.dtos.CommentDto">
+        UPDATE Comment
+        SET content = #{content}
+        WHERE comment_id = #{commentId}
+    </update>
+    
     <!-- 댓글 삭제 -->
     <delete id="deleteComment">
         DELETE FROM Comment WHERE comment_id = #{commentId}
     </delete>
 
-    <!-- 특정 게시글의 댓글 조회 -->
-    <select id="getCommentsByPostId" resultType="com.console.board.dtos.CommentDto">
-	    SELECT c.comment_id AS commentId, c.post_id AS postId, c.user_id AS userId, c.content, 
-	           c.parent_comment_id AS parentCommentId, c.created_at AS createdAt, 
-	           u.nickname AS userNickname
-	      FROM Comment c
-	      JOIN User u ON c.user_id = u.user_id
-	     WHERE c.post_id = #{postId}
-	     ORDER BY c.created_at ASC
-	</select>
-
+    <!-- 특정 게시글의 댓글 수 조회 -->
+    <select id="getCommentCount" resultType="int">
+        SELECT COUNT(*) FROM Comment WHERE post_id = #{postId}
+    </select>
+    
+    <!-- 특정 댓글 조회 (수정 후 반환용) -->
+    <select id="getCommentById" parameterType="int" resultType="com.console.board.dtos.CommentDto">
+        SELECT comment_id AS commentId,
+               post_id AS postId,
+               user_id AS userId,
+               content,
+               parent_comment_id AS parentCommentId,
+               created_at AS createdAt
+        FROM Comment
+        WHERE comment_id = #{commentId}
+    </select>
+    
+    <!-- 특정 게시글의 댓글 목록을 계층적으로 조회 (parent_comment_id 순서로 정렬) -->
+    <select id="getCommentsByPostIdOrdered" resultType="com.console.board.dtos.CommentDto">
+        SELECT c.comment_id AS commentId, c.post_id AS postId, c.user_id AS userId, c.content, 
+               c.parent_comment_id AS parentCommentId, c.created_at AS createdAt, 
+               u.nickname AS userNickname
+        FROM Comment c
+        JOIN User u ON c.user_id = u.user_id
+        WHERE c.post_id = #{postId}
+        ORDER BY COALESCE(c.parent_comment_id, c.comment_id), c.created_at
+    </select>
+    
 </mapper>
-

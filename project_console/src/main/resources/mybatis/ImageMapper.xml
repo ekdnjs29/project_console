@@ -17,4 +17,9 @@
         WHERE post_id = #{postId}
     </select>
 
+	<!-- ImageMapper.xml -->
+	<delete id="deleteImageByUrl" parameterType="String">
+    	DELETE FROM image WHERE image_url = #{imageUrl}
+	</delete>
+	
 </mapper>

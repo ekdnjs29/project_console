@@ -5,6 +5,7 @@ import com.console.board.dtos.ImageDto;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ImageMapper {
@@ -13,4 +14,7 @@ public interface ImageMapper {
 
     // 특정 게시글의 모든 이미지 조회
     List<ImageDto> selectImagesByPostId(int postId);
+    
+    void deleteImageByUrl(@Param("imageUrl") String imageUrl);
+
 }

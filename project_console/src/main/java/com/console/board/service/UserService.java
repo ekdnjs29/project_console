@@ -44,7 +44,7 @@ public class UserService {
         userDto.setNickname(registerUserCommand.getNickname());
         userDto.setEmail(registerUserCommand.getEmail());
         userDto.setPassword(passwordEncoder.encode(registerUserCommand.getPassword()));
-        userDto.setRole(RoleStatus.USER.toString()); // 기본 사용자 등급 설정
+        userDto.setRole(RoleStatus.USER); // 기본 사용자 등급 설정
 
         return userMapper.registerUser(userDto) > 0; // 성공 여부 반환
     }
@@ -55,8 +55,6 @@ public class UserService {
         String path = "home"; 
 
         if (user != null) {
-            System.out.println("DB에서 가져온 사용자 ID: " + user.getUserId()); // 디버깅 로그 추가
-
             // 비밀번호 일치 확인
             if (passwordEncoder.matches(loginCommand.getPassword(), user.getPassword())) {
                 System.out.println("패스워드 일치: 로그인 성공");

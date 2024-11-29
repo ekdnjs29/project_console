@@ -39,4 +39,35 @@
     FROM user
     WHERE user_id = #{userId}
 	</select>
+	
+<!-- 페이징 처리를 위한 모든 사용자 조회 -->
+   <select id="findAll" resultType="com.console.board.dtos.UserDto">
+    SELECT 
+        u.user_id AS userId, 
+        u.username, 
+        u.nickname, 
+        u.email, 
+        u.role,
+        CASE WHEN s.user_id IS NOT NULL THEN 1 ELSE 0 END AS suspended  <!-- suspended 필드 추가 -->
+    FROM 
+        User u
+    LEFT JOIN 
+        SuspendedUser s ON u.user_id = s.user_id
+    ORDER BY 
+        u.user_id DESC
+    LIMIT #{limit} OFFSET #{offset}
+</select>
+
+    
+    <!-- 전체 사용자 수 조회 -->
+    <select id="countUsers" resultType="int">
+        SELECT COUNT(*) FROM User
+    </select>
+    
+    <update id="updateUserRole" parameterType="com.console.board.dtos.UserDto">
+	    UPDATE User
+	    SET role = #{role}
+	    WHERE user_id = #{userId}
+	</update>
+
 </mapper>

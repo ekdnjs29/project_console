@@ -6,10 +6,22 @@
     <title>Layout Page</title>
     <link rel="stylesheet" th:href="@{/css/header/header.css}">
     <link rel="stylesheet" th:href="@{/css/header/writeHeader.css}">
-    <link rel="stylesheet" th:href="@{/css/home.css}">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">    
+
+    <!-- highlight.js CSS (atom-one-dark 테마) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/atom-one-dark.min.css">
     
+    <!-- highlight.js JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+     <script th:inline="javascript">
+        /*<![CDATA[*/
+        var sessionUserId = /*[[${session.userDto != null ? session.userDto.userId : 0}]]*/ 0;
+        console.log("Loaded sessionUserId: " + sessionUserId); // 확인용 로그
+        /*]]>*/
+    </script>
 </head>
 <body>
 
@@ -26,10 +38,14 @@
     <div layout:fragment="content" class="content"></div>
 	
 	<script src="/js/like.js"></script>
-    <script src="/js/comment.js"></script>
-    <script src="/js/imageUpload.js"></script>
+    <script th:if="${isDetailForm}" src="/js/comment.js"></script>
+    <script th:if="${isDetailForm}" src="/js/commentUpdate.js"></script>
+    <script src="/js/report.js"></script>
+    <script src="/js/member.js"></script>
     <script src="/js/dropdown.js"></script>
-    <script src="/js/write.js"></script>
-	
+    <script src="/js/home.js"></script>
+    <script th:if="${isWritingForm}" src="/js/write.js"></script>
+    <script th:if="${isWritingForm}" src="/js/imageUpload.js"></script>
+    
 </body>
 </html>
