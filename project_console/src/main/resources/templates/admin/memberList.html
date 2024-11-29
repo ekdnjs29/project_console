@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+	<meta charset="UTF-8">
+	<title>회원 목록</title>
+	<link rel="stylesheet" th:href="@{/css/list.css}">
+	
+</head>
+
+<body>
+    <div layout:fragment="content" class="detail-container">
+     <div class="header-section">
+       <h2>회원 목록</h2>
+        
+        <div class="actions">
+					<span class="edit" id="edit-button">수정</span>
+                    <span class="delete" id="delete-button">삭제</span>
+                    <span class="complete" id="complete-button" style="display: none;">완료</span>
+        </div>
+      </div>
+        
+      <div class="container">
+        <table class="table">
+        
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>user id</th>
+                    <th>name</th>
+                    <th>nickname</th>
+                    <th>email</th>
+                    <th>role</th>
+                    <th>suspended</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="member : ${members}">
+                    <td><input type="checkbox" class="member-checkbox" th:data-user-id="${member.userId}"></td>
+			        <td th:text="${member.userId}">user id</td>
+			        <td th:text="${member.username}">name</td>
+			        <td th:text="${member.nickname}">nickname</td>
+			        <td th:text="${member.email}">email</td>
+			        
+                        <!-- Role 드롭다운 버튼 -->
+                        <td>
+                            <span class="role-text" th:text="${member.role}"></span>
+                            <select class="role-select" style="display: none;">
+                                <option value="USER" th:selected="${member.role == 'USER'}">USER</option>
+                                <option value="ADMIN" th:selected="${member.role == 'ADMIN'}">ADMIN</option>
+                            </select>
+                        </td>
+                        
+                        <!-- Suspended 드롭다운 버튼 -->
+                        <td>
+                           	<span class="suspended-text" th:text="${member.suspended == 1 ? 'Suspended' : 'Active'}"></span>
+                            <select class="suspended-select" style="display: none;">
+                                <option value="0" th:selected="${member.suspended == 0}">Active</option>
+                                <option value="1" th:selected="${member.suspended == 1}">Suspended</option>
+                            </select>
+                        </td>
+                    </tr>
+                <!-- 추가적인 사용자 정보를 반복적으로 나열 -->
+            </tbody>
+        </table>
+        
+        <div class="pagination">
+    	<button th:disabled="${currentPage == 1}" 
+        th:onclick="|window.location='?page=${currentPage - 1}&pageSize=10'|">〈</button>
+
+<span class="page-info"><span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span></span>
+
+<button th:disabled="${currentPage == totalPages}" 
+        th:onclick="|window.location='?page=${currentPage + 1}&pageSize=10'|">〉</button>
+
+    	
+    	</div>
+
+    </div>
+    </div>
+</body>
+</html>

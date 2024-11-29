@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+<meta charset="UTF-8">
+<title>신고 목록</title>
+<link rel="stylesheet" th:href="@{/css/list.css}">
+</head>
+<body>
+    <div layout:fragment="content" class="detail-container">
+        
+             <div class="header-section">
+        
+        <h2>신고 목록</h2>
+        
+		<div class="actions">
+                <span class="edit" id="edit-button">수정</span>
+                <span class="delete" id="delete-button">삭제</span>
+                <span class="complete" id="complete-button" style="display: none;">완료</span>
+            </div>
+            
+                  </div>
+            
+            <div class="container">
+            
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>id</th>
+                    <th>target</th>
+                    <th>신고자</th>
+                    <th>유형</th>
+                    <th>사유</th>
+                    <th>suspended</th>
+                    <th>처리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="report : ${reports}">
+                     <td><input type="checkbox" class="report-checkbox"
+								th:data-report-id="${report.reportId}" 
+                                   th:data-target-type="${report.targetType}" 
+                                   th:data-target-id="${report.targetId}" 
+                                   th:data-reason="${report.reason}"                
+                                   th:data-suspended-days="${report.suspendedDays}">                     
+                     </td>
+                    <td th:text="${report.reportId}">id</td>
+                    <td>
+					    <a th:href="${report.targetType == 'POST' ? '/posts/' + report.targetId : '/posts/' + report.postId + '?commentId=' + report.targetId}">
+					        <span th:text="${report.targetId}">target</span>
+					    </a>
+					</td>
+                    <td th:text="${report.reporterId}">신고자</td>
+                    <td th:text="${report.targetType}">유형</td>
+                    <td th:text="${report.reason}">사유</td>
+                    <!-- 드롭다운 메뉴 -->
+                        <td>
+                            <!-- 신고 상태가 RESOLVED이면 정지 일수를 텍스트로 표시, 아니면 드롭다운 표시 -->
+    <span th:if="${report.status.toString() == 'RESOLVED'}" th:text="${report.suspendedDays} + '일'">정지 일수</span>
+    <select th:if="${report.status.toString() != 'RESOLVED'}" class="suspend-select" style="display: none;">
+        <option value="0" th:selected="${report.suspendedDays == 0}">0일</option>
+        <option value="3" th:selected="${report.suspendedDays == 3}">3일</option>
+        <option value="5" th:selected="${report.suspendedDays == 5}">5일</option>
+        <option value="7" th:selected="${report.suspendedDays == 7}">7일</option>
+    </select>
+                        </td>
+                    <td th:text="${report.status}">처리</td>
+                </tr>
+            </tbody>
+        </table>
+                
+        
+        <div class="pagination">
+    	<button th:disabled="${currentPage == 1}" 
+        th:onclick="|window.location='?page=${currentPage - 1}&pageSize=10'|">〈</button>
+
+<span class="page-info"><span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span></span>
+
+<button th:disabled="${currentPage == totalPages}" 
+        th:onclick="|window.location='?page=${currentPage + 1}&pageSize=10'|">〉</button>
+
+    	
+    	</div>
+    </div>
+	</div>
+</body>
+</html>

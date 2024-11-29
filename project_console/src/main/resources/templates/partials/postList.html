@@ -1,0 +1,17 @@
+<div th:each="post : ${postList}" class="post-item">
+    <a th:href="@{/posts/{postId}(postId=${post.postId})}" class="post-link" style="display: flex; align-items: center; text-decoration: none; color: inherit; justify-content: space-between;">
+        <div class="post-content">
+            <p class="post-meta">
+                <span th:text="${post.userNickname}">작성자</span>
+                <span> &nbsp; </span>
+                <span th:text="${#dates.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+            </p>
+            <h2 class="post-title" th:text="${post.title}">글 제목</h2>
+            <p class="post-excerpt" th:text="${#strings.abbreviate(post.cleanContent, 100)}">내용 내용 내용</p>
+            <p class="post-actions">하트 <span th:text="${post.likeCount}">0</span> 댓글 <span th:text="${post.commentCount}">0</span></p>
+        </div>
+        <div class="post-image" th:if="${post.firstImageUrl}">
+            <img th:src="@{${post.firstImageUrl}}" alt=" ">
+        </div>
+    </a>
+</div>
